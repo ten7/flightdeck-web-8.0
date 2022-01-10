@@ -1,0 +1,185 @@
+---
+- name: Do base configuration
+  include_role:
+    name: "ten7.flightdeck_base"
+- name: Install needed software
+  apk:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - "apache2"
+    - "libcap"
+    - "zlib"
+    - "apache2"
+    - "apache2-proxy"
+    - "php8-apache2"
+    - "php8"
+    - "git"
+    - "patch"
+    - "curl"
+    - "php8-bcmath"
+    - "php8-ctype"
+    - "php8-curl"
+    - "php8-dom"
+    - "php8-fileinfo"
+    - "php8-gd"
+    - "php8-iconv"
+    - "php8-intl"
+    - "php8-json"
+    - "php8-ldap"
+    - "php8-mbstring"
+    - "php8-pecl-mcrypt"
+    - "php8-pecl-memcached"
+    - "php8-mysqli"
+    - "php8-mysqlnd"
+    - "php8-opcache"
+    - "php8-openssl"
+    - "php8-phar"
+    - "php8-sqlite3"
+    - "php8-odbc"
+    - "php8-pdo_odbc"
+    - "php8-pdo"
+    - "php8-pdo_mysql"
+    - "php8-pdo_sqlite"
+    - "php8-phar"
+    - "php8-soap"
+    - "php8-session"
+    - "php8-simplexml"
+    - "php8-tokenizer"
+    - "php8-xdebug"
+    - "php8-exif"
+    - "php8-xml"
+    - "php8-xmlreader"
+    - "php8-xmlwriter"
+    - "php8-zip"
+    - "php8-zlib"
+    - "py3-passlib"
+    - "py3-mysqlclient"
+    - "composer"
+    - "mariadb-client"
+    - "rsync"
+    - "openssh-client"
+    - "unixodbc-dev"
+    - "freetds-dev"
+    - "nodejs"
+    - "npm"
+    - "libsass"
+  notify:
+    - clear caches
+- name: Add global php symlink
+  file:
+    src: "/usr/bin/php8"
+    dest: "/usr/local/bin/php"
+    state: link
+    force: yes
+    follow: no
+- name: Ensure key directories are owned by apache
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "apache"
+    group: "apache"
+    mode: "u=rwx,g=rwx,o=r"
+    recurse: yes
+  loop:
+    - "/etc/apache2"
+    - "/etc/ssl/apache2"
+    - "/etc/apache2/sites.d"
+    - "/etc/php8"
+    - "/run/apache2"
+    - "/var/log/apache2"
+    - "/var/www"
+    - "/var/www/.drush"
+    - "/var/www/.drush/sites"
+    - "/var/www/.npm-global"
+    - "/srv/html"
+- name: Link logs files to stdout for the Docker log collector
+  file:
+    src: "{{ item }}"
+    dest: "/dev/stdout"
+    state: link
+    force: yes
+    follow: no
+  loop:
+    - "/var/log/apache2/access.log"
+    - "/var/log/apache2/000_default-access_log"
+    - "/var/log/apache2/000_default_ssl-access_log"
+- name: Link logs files to stderr for the Docker log collector
+  file:
+    src: "{{ item }}"
+    dest: "/dev/stderr"
+    state: link
+    force: yes
+    follow: no
+  loop:
+    - "/var/log/apache2/error.log"
+    - "/var/log/apache2/000_default-error_log"
+    - "/var/log/apache2/000_default_ssl-error_log"
+- name: Make directories for cli utilities
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "apache"
+    group: "apache"
+    mode: "u=rwx,g=rwx,o=r"
+  loop:
+    - "/etc/drush10"
+    - "/etc/wpcli"
+    - "/var/www/.composer/vendor/bin"
+- name: Install Drush 10.x
+  shell: >
+    composer require drush/drush:{{ flightdeck_drush_version | default('^10.0.0') }} &&
+    /etc/drush10/vendor/bin/drush core:init -y
+  args:
+    chdir: "/etc/drush10"
+  become: yes
+  become_user: "apache"
+  become_method: "su"
+- name: Install Wordpress CLI
+  get_url:
+    url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
+    dest: "/etc/wpcli/wp"
+    owner: "apache"
+    group: "apache"
+    mode: "u=rx,g=rx,o=rx"
+- name: Add global drush and wp symlinks
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    force: yes
+    follow: no
+  loop:
+    - src: "/etc/drush10/vendor/bin/drush"
+      dest: "/usr/local/bin/drush10"
+    - src:  "/etc/drush10/vendor/bin/drush"
+      dest: "/var/www/.composer/vendor/bin/drush"
+    - src: "/etc/wpcli/wp"
+      dest: "/usr/local/bin/wp"
+- name: Set node global packages to install as user-local
+  shell: >
+    npm config set prefix '/var/www/.npm-global'
+  become: yes
+  become_user: "apache"
+  become_method: "su"
+- name: Install theme utilities
+  shell: >
+    npm install -g sass gulp
+  become: yes
+  become_user: "apache"
+  become_method: "su"
+- name: Configure ODBC
+  template:
+    src: "templates/odbcinst.ini"
+    dest: "/etc/odbcinst.ini"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
+- name: Template default index.html
+  template:
+    src: "templates/index.html"
+    dest: "/srv/html/index.html"
+    owner: "apache"
+    group: "apache"
+    mode: "u=rw,g=r,o=r"

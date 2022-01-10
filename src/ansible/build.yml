@@ -1,0 +1,4 @@
+---
+- hosts: flightdeck_web
+  roles:
+    - flightdeck-web-build

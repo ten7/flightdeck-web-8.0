@@ -1,0 +1,57 @@
+---
+flighdeck_motd_name: web 8.0
+
+flightdeck_groups:
+  - name: "apache"
+
+flightdeck_users:
+  - name: "apache"
+    group: "apache"
+    home: "/var/www"
+
+flightdeck_root_prompt: '\u@flightdeck-web-8.0:\w# '
+flightdeck_user_prompt: '\u@flightdeck-web-8.0:\w$ '
+
+flightdeck_motd_links:
+  - name: 'Code & docs'
+    url: 'https://github.com/ten7/flightdeck-web-8.0'
+  - name: ' Learn more'
+    url: 'https://flightdeck.ten7.com/'
+
+flightdeck_init_commands: |
+  if [ -f "/ansible/init.yml" ]; then
+    if [ -n "${FLIGHTDECK_CONFIG}" ]; then
+      config_file=$(mktemp "${TMPDIR:-/tmp/}$(basename $0).XXXXXXXXXXXX")
+      echo "$FLIGHTDECK_CONFIG" | base64 -d > $config_file
+      ansible-playbook -i /ansible/inventories/all.ini -e "@${config_file}" /ansible/init.yml
+    elif [ -f "${FLIGHTDECK_CONFIG_FILE}" ]; then
+      ansible-playbook -i /ansible/inventories/all.ini -e "@${FLIGHTDECK_CONFIG_FILE}" /ansible/init.yml
+    elif [ -f "/config/web/flightdeck-web.yml" ]; then
+      ansible-playbook -i /ansible/inventories/all.ini -e "@/config/web/flightdeck-web.yml" /ansible/init.yml
+    else
+      ansible-playbook -i /ansible/inventories/all.ini /ansible/init.yml
+    fi
+  fi
+
+flightdeck_run_commands: |
+  if [ -f "/ansible/run.yml" ]; then
+    if [ -n "${FLIGHTDECK_CONFIG}" ]; then
+      config_file=$(mktemp "${TMPDIR:-/tmp/}$(basename $0).XXXXXXXXXXXX")
+      echo "$FLIGHTDECK_CONFIG" | base64 -d > $config_file
+      ansible-playbook -i /ansible/inventories/all.ini -e "@${config_file}" /ansible/run.yml
+    elif [ -f "${FLIGHTDECK_CONFIG_FILE}" ]; then
+      ansible-playbook -i /ansible/inventories/all.ini -e "@${FLIGHTDECK_CONFIG_FILE}" /ansible/run.yml
+    elif [ -f "/config/web/flightdeck-web.yml" ]; then
+      ansible-playbook -i /ansible/inventories/all.ini -e "@/config/web/flightdeck-web.yml" /ansible/run.yml
+    else
+      ansible-playbook -i /ansible/inventories/all.ini /ansible/run.yml
+    fi
+  fi
+
+flightdeck_path:
+  - "/var/www/.composer/vendor/bin"
+  - "/var/www/.npm-global/bin"
+
+flightdeck_env:
+  - name: "COMPOSER_MEMORY_LIMIT"
+    value: "-1"
