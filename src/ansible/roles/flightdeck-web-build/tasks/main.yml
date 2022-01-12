@@ -129,7 +129,7 @@
     - "/var/www/.composer/vendor/bin"
 - name: Install Drush 10.x
   shell: >
-    composer require drush/drush:{{ flightdeck_drush_version | default('^10.0.0') }} &&
+    composer require drush/drush:{{ flightdeck_drush_version | default('^10.6.2') }} &&
     /etc/drush10/vendor/bin/drush core:init -y
   args:
     chdir: "/etc/drush10"
