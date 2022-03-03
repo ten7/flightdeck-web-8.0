@@ -1,4 +1,4 @@
-![Flight Deck](https://raw.githubusercontent.com/ten7/flight-deck/master/flightdeck-logo.png)
+![Flight Deck](https://flightdeck.ten7.com/flightdeck.svg)
 
 # Flight Deck Web
 
@@ -36,7 +36,7 @@ You can provide this file in one of three ways to the container:
 
 * Mount the configuration file at path `/config/web/flightdeck-web.yml` inside the container using a bind mount, configmap, or secret.
 * Mount the config file anywhere in the container, and set the `FLIGHTDECK_CONFIG_FILE` environment variable to the path of the file.
-* Encode the contents of `flightdeck-web.yml` as base64 and assign the result to the `FLIGHTDECK_CONFIG` environment variable. 
+* Encode the contents of `flightdeck-web.yml` as base64 and assign the result to the `FLIGHTDECK_CONFIG` environment variable.
 
 ### Configuring virtual hosts
 

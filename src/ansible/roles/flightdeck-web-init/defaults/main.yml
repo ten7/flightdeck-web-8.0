@@ -47,5 +47,11 @@ flightdeck_web_defaults:
   xdebugProfile:
     trigger: "{{ lookup('env', 'PHP_XDEBUG_PROFILE_TRIGGER') }}"
     force: no
+  apcu:
+    enabled: yes
+    shm_size: '32M'
+    entries_hint: '4096'
+    ttl: '1200'
+    gc_ttl: '3600'
 
 flightdeck_web: flightdeck_web_defaults

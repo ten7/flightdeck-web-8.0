@@ -35,6 +35,7 @@
     - "php8-mysqlnd"
     - "php8-opcache"
     - "php8-openssl"
+    - "php8-pecl-apcu"
     - "php8-phar"
     - "php8-sqlite3"
     - "php8-odbc"

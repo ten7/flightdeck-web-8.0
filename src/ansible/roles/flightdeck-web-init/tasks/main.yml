@@ -33,6 +33,8 @@
       dest: "/etc/php8/php.ini"
     - src: "templates/00_opcache.ini"
       dest: "/etc/php8/conf.d/00_opcache.ini"
+    - src: "templates/apcu.ini"
+      dest: "/etc/php8/conf.d/apcu.ini"
 - name: Configure xdebug
   template:
     src: "templates/50_xdebug.ini"
