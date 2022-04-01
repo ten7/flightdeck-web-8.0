@@ -36,6 +36,8 @@
     - "php8-opcache"
     - "php8-openssl"
     - "php8-pecl-apcu"
+    - "php7-pecl-memcache"
+    - "php7-pecl-redis"
     - "php8-phar"
     - "php8-sqlite3"
     - "php8-odbc"
