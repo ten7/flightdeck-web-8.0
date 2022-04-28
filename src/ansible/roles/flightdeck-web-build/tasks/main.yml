@@ -36,8 +36,6 @@
     - "php8-opcache"
     - "php8-openssl"
     - "php8-pecl-apcu"
-    - "php7-pecl-memcache"
-    - "php7-pecl-redis"
     - "php8-phar"
     - "php8-sqlite3"
     - "php8-odbc"
@@ -172,6 +170,11 @@
   become: yes
   become_user: "apache"
   become_method: "su"
+- name: Download Terminus
+  get_url:
+    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.6/terminus.phar"
+    dest: "/usr/local/bin/terminus"
+    mode: "u=rx,g=rx,o="
 - name: Configure ODBC
   template:
     src: "templates/odbcinst.ini"
