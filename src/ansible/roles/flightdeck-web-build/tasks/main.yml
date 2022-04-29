@@ -170,10 +170,12 @@
   become: yes
   become_user: "apache"
   become_method: "su"
-- name: Download Terminus
+- name: Install Terminus
   get_url:
-    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.6/terminus.phar"
+    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.7/terminus.phar"
     dest: "/usr/local/bin/terminus"
+    owner: "apache"
+    group: "apache"
     mode: "u=rx,g=rx,o="
 - name: Configure ODBC
   template:
