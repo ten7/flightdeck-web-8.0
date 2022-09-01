@@ -68,6 +68,7 @@
     - "nodejs"
     - "npm"
     - "libsass"
+    - "nano"
   notify:
     - clear caches
 - name: Add global php symlink
