@@ -42,4 +42,9 @@
     owner: "apache"
     group: "apache"
     mode: "u=rw,g=r,o="
-
+- name: Update initial directory
+  lineinfile:
+    path: "/var/www/.bashrc"
+    regexp: "^cd \\$HOME$"
+    line: "cd {{ flightdeck_web.vhosts[0].entrypoint | flightdeck_web.vhosts[0].docroot | default('$HOME') }}"
+    state: present
