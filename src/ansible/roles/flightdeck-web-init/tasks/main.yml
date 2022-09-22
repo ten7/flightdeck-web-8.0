@@ -46,5 +46,7 @@
   lineinfile:
     path: "/var/www/.bashrc"
     regexp: "^cd \\$HOME$"
-    line: "cd {{ flightdeck_web.vhosts[0].entrypoint | flightdeck_web.vhosts[0].docroot | default('$HOME') }}"
+    line: "cd {{ flightdeck_web.vhosts[0].entrypoint }}"
     state: present
+  when:
+  - flightdeck_web.vhosts[0].entrypoint is defined
