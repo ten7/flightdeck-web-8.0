@@ -12,8 +12,8 @@ COPY ansible-hosts /etc/ansible/hosts
 COPY ansible.cfg /etc/ansible/ansible.cfg
 COPY ansible /ansible
 
-# Run the build.
-RUN ansible-galaxy install -fr /ansible/requirements.yml && \
+# Run the build. https://github.com/ansible/ansible/issues/78491
+RUN ansible-galaxy install -f -r /ansible/requirements.yml && \
     ansible-playbook -i /etc/ansible/hosts /ansible/build.yml
 
 # Allow Apache to allocate ports as non-root.
