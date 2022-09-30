@@ -15,8 +15,8 @@ There are several tags available for this container, each with different softwar
 
 | Tags | PHP version | Drupal versions | Drush |
 | ---- | ----------- | --------------- | ----- |
-| latest | 7.4 | 7, 8, 9 | 8.x and 10.x |
-| x.y.z | 7.4 | 7, 8, 9 | 8.x and 10.x |
+| latest | 8.0 | 7, 8, 9 | 8.x and 10.x |
+| x.y.z | 8.0 | 7, 8, 9 | 8.x and 10.x |
 
 Where:
  * **x.y.z** is the container version as seen on the [tags page](https://github.com/ten7/flightdeck-web-7.4/tags)
