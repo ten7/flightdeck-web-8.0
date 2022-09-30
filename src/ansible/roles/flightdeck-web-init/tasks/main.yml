@@ -45,6 +45,4 @@
 - name: Update initial directory
   lineinfile:
     path: "/var/www/.bashrc"
-    line: "cd {{ flightdeck_web.initialDir }}"
-  when:
-  - flightdeck_web.initialDir is defined
+    line: "cd {{ flightdeck_web.initialDir | default('$HOME') }}"
