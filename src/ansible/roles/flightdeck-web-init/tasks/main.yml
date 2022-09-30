@@ -45,8 +45,6 @@
 - name: Update initial directory
   lineinfile:
     path: "/var/www/.bashrc"
-    regexp: "^cd \\$HOME$"
-    line: "cd {{ flightdeck_web.vhosts[0].entrypoint }}"
-    state: present
+    line: "cd {{ flightdeck_web.entry_point }}"
   when:
-  - flightdeck_web.vhosts[0].entrypoint is defined
+  - flightdeck_web.entry_point is defined
