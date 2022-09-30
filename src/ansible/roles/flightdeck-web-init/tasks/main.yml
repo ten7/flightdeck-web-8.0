@@ -42,4 +42,7 @@
     owner: "apache"
     group: "apache"
     mode: "u=rw,g=r,o="
-
+- name: Update initial directory
+  lineinfile:
+    path: "/var/www/.bashrc"
+    line: "cd {{ flightdeck_web.initialDir | default('$HOME') }}"
