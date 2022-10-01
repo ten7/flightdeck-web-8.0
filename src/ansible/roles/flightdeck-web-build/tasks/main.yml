@@ -29,7 +29,6 @@
     - "php81-json"
     - "php81-ldap"
     - "php81-mbstring"
-    - "php81-pecl-mcrypt"
     - "php81-pecl-memcached"
     - "php81-mysqli"
     - "php81-mysqlnd"
@@ -73,7 +72,7 @@
     - clear caches
 - name: Add global php symlink
   file:
-    src: "/usr/bin/php8"
+    src: "/usr/bin/php81"
     dest: "/usr/local/bin/php"
     state: link
     force: yes
@@ -91,6 +90,7 @@
     - "/etc/ssl/apache2"
     - "/etc/apache2/sites.d"
     - "/etc/php81"
+    - "/etc/wpcli"
     - "/run/apache2"
     - "/var/log/apache2"
     - "/var/www"
@@ -128,15 +128,8 @@
     group: "apache"
     mode: "u=rwx,g=rwx,o=r"
   loop:
-    - "/etc/drush10"
     - "/etc/wpcli"
     - "/var/www/.composer/vendor/bin"
-- name: Install Drush 10.x
-  shell: >
-    composer require drush/drush:{{ flightdeck_drush_version | default('^10.6.2') }} &&
-    /etc/drush10/vendor/bin/drush core:init -y
-  args:
-    chdir: "/etc/drush10"
   become: yes
   become_user: "apache"
   become_method: "su"
@@ -155,10 +148,6 @@
     force: yes
     follow: no
   loop:
-    - src: "/etc/drush10/vendor/bin/drush"
-      dest: "/usr/local/bin/drush10"
-    - src:  "/etc/drush10/vendor/bin/drush"
-      dest: "/var/www/.composer/vendor/bin/drush"
     - src: "/etc/wpcli/wp"
       dest: "/usr/local/bin/wp"
 - name: Set node global packages to install as user-local

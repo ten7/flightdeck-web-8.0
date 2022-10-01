@@ -1,5 +1,5 @@
 ---
-flighdeck_motd_name: web 8.0
+flighdeck_motd_name: web 8.1
 
 flightdeck_groups:
   - name: "apache"
@@ -9,12 +9,12 @@ flightdeck_users:
     group: "apache"
     home: "/var/www"
 
-flightdeck_root_prompt: '\u@flightdeck-web-8.0:\w# '
-flightdeck_user_prompt: '\u@flightdeck-web-8.0:\w$ '
+flightdeck_root_prompt: '\u@flightdeck-web-8.1:\w# '
+flightdeck_user_prompt: '\u@flightdeck-web-8.1:\w$ '
 
 flightdeck_motd_links:
   - name: 'Code & docs'
-    url: 'https://github.com/ten7/flightdeck-web-8.0'
+    url: 'https://github.com/ten7/flightdeck-web-8.1'
   - name: ' Learn more'
     url: 'https://flightdeck.ten7.com/'
 
