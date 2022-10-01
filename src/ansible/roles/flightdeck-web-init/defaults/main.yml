@@ -14,8 +14,6 @@ flightdeck_web_default_vhosts:
 
 flightdeck_web_defaults:
   vhosts: "{{ flightdeck_web_default_vhosts }}"
-  drush:
-    version: "{{ lookup('env', 'DRUSH_VERSION') | default('10.x', true )}}"
   php:
     sendmail_path: "{{ lookup('env', 'PHP_SENDMAIL_PATH') | default('/usr/sbin/sendmail', true) }}"
     max_execution_time: "{{ lookup('env', 'PHP_MAX_EXEC_TIME') | default('120', true) }}"
