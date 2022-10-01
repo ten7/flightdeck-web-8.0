@@ -1,25 +1,25 @@
-![Flight Deck](https://flightdeck.ten7.com/flightdeck.svg)
+![Flightdeck](https://flightdeck.ten7.com/flightdeck.svg)
 
-# Flight Deck Web
+# Flightdeck Web
 
-Flight Deck Web is a minimalist Apache/PHP container for Drupal, Wordpress, and other PHP-based sites on Kubernetes and Docker. You can use it both for local development and production.
+Flightdeck Web is a minimalist Apache/PHP container for Drupal, Wordpress, and other PHP-based sites on Kubernetes and Docker. You can use it both for local development and production on Docker Swarm or Kubernetes.
 
 Features:
 * ConfigMap-friendly YAML configuration
 * PHP optimized out of the box for Drupal sites, while supporting any PHP application.
-* Composer 2, xdebug 3, Drush 10, Imagemagick, Node, and SASS out of the box
+* Composer 2, xdebug 3, Imagemagick, Node, and SASS out of the box
 
 ## Tags and versions
 
-There are several tags available for this container, each with different software and support:
+Current software versions for latest and tags:
 
-| Tags | PHP version | Drupal versions | Drush |
-| ---- | ----------- | --------------- | ----- |
-| latest | 7.4 | 7, 8, 9 | 8.x and 10.x |
-| x.y.z | 7.4 | 7, 8, 9 | 8.x and 10.x |
+| Tags | PHP version | Drupal versions | Composer | WP-CLI | Alpine |
+| ---- | ----------- | --------------- | ----- | ------ | ------ |
+| latest | 8.1 | 8, 9, 10 | 2.4.2 | 2.6.0 | 3.16 |
+| 1.0.0 | 8.1 | 8, 9, 10 | 2.4.2 | 2.6.0 | 3.16 |
 
 Where:
- * **x.y.z** is the container version as seen on the [tags page](https://github.com/ten7/flightdeck-web-7.4/tags)
+ * **x.y.z** is the container version as seen on the [tags page](https://github.com/ten7/flightdeck-web-8.1/tags)
 
 ## Configuration
 
@@ -109,22 +109,43 @@ Where:
 * **error_log** is the full path inside the container to write the PHP error log. Optional, defaults to the docker log collector at `/dev/stderr`.
 * **variables_order** specifies the order and types of variables to make available when serving web requests. Optional, defaults to production values.
 
-### Drush version
+### Configuring initial directory
 
-This container assumes Drush 10 out of the box. To use Drush 8.x for Drupal 7, set the `flightdeck_web.drush.version` key:
+This container may be configured to start an interactive shell (by `docker compose exec flightdeck_web /bin/bash`) in a predefined directory.
 
 ```yaml
 ---
 flightdeck_web:
-  drush:
-    version: 8.x
+  initialDir: "/var/www"
+```
+
+Where:
+* **initialDir** is the full path to the starting directory. Optional, defaults to `$HOME`.
+
+### Drush version
+
+This container does _not_ install Drush globally out of the box, and thus is incompatible with Drupal sites which require it. 
+
+To use Drush it must be installed per-project using composer:
+
+```bash
+composer require drush/drush:<version>
 ```
 
 Where:
 
-* **version** is the Drush version series to use, either `8.x` or `10.x`.
+* **version** is the Drush version to use, with standard composer syntax, examples: `^8.0` `^11.0`.
 
-Alternatively, you may choose to set the `DRUSH_VERSION` environment variable to `8.x`. This is only respected on container startup. To force a particular command invocation to use Drush 8.x, use the `drush8` command instead of `drush`.
+[Drush Launcher](https://github.com/drush-ops/drush-launcher) _is_ installed by default, allowing Composer managed Drush installations to be ran from the global `$PATH`.
+
+This is useful for being able to run both composer and Drush from the same directory, like `/var/www`, when the Drupal site is installed in `/var/www/html`.
+
+Combine this with the initialDir key being set to `/var/www` and deploying a full Composer-driven Drupal install is as easy as:
+
+```bash
+composer install
+drush deploy
+```
 
 ### XDebug configuration
 
@@ -222,13 +243,13 @@ It is highly recommended to add `docker-compose.overrides.yml` to your project's
 
 ## Extending
 
-Often, you may wish to build a custom container on top of this one which includes your website. To see an example of this, see the [ten7/flight-deck-drupal](https://github.com/ten7/flight-deck-drupal) example container.
+Often, you may wish to build a custom container on top of this one which includes your website. To see an older example of this, see the [ten7/flight-deck-drupal](https://github.com/ten7/flight-deck-drupal) example container.
 
-## Part of Flight Deck
+## Part of Flightdeck
 
-This container is part of the [Flight Deck library](https://github.com/ten7/flight-deck) of containers for Drupal local development and production workloads on Docker, Swarm, and Kubernetes.
+This container is part of the [Flightdeck](https://flightdeck.ten7.com) set of containers for Drupal local development and production workloads on Docker, Swarm, and Kubernetes.
 
-Flight Deck is used and supported by [TEN7](https://ten7.com/).
+Flightdeck is used and supported by [TEN7](https://ten7.com/).
 
 ## Debugging
 
