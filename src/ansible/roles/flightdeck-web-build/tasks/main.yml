@@ -95,6 +95,7 @@
     - "/etc/ssl/apache2"
     - "/etc/apache2/sites.d"
     - "/etc/php81"
+    - "/etc/drush"
     - "/etc/wpcli"
     - "/run/apache2"
     - "/var/log/apache2"
@@ -133,11 +134,22 @@
     group: "apache"
     mode: "u=rwx,g=rwx,o=r"
   loop:
+    - "/etc/drush"
     - "/etc/wpcli"
     - "/var/www/.composer/vendor/bin"
   become: yes
   become_user: "apache"
   become_method: "su"
+  register: command_output
+- debug:
+    var: command_output.stdout_lines
+- name: Install Drush Launcher
+  get_url:
+    url: "https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar"
+    dest: "/etc/drush/drush"
+    owner: "apache"
+    group: "apache"
+    mode: "u=rx,g=rx,o=rx"
 - name: Install Wordpress CLI
   get_url:
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
@@ -153,6 +165,8 @@
     force: yes
     follow: no
   loop:
+    - src: "/etc/drush/drush"
+      dest: "/usr/local/bin/drush"
     - src: "/etc/wpcli/wp"
       dest: "/usr/local/bin/wp"
 - name: Set node global packages to install as user-local
