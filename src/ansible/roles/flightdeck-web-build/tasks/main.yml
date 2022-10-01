@@ -77,6 +77,11 @@
     state: link
     force: yes
     follow: no
+- name: Force Composer to be ran with PHP 8.1
+  lineinfile:
+    path: "/usr/bin/composer"
+    regexp: '^/usr/bin/php8'
+    line: '/usr/bin/php81 /usr/bin/composer.phar $@'
 - name: Ensure key directories are owned by apache
   file:
     path: "{{ item }}"
