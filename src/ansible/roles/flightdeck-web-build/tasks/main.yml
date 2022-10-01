@@ -183,7 +183,7 @@
   become_method: "su"
 - name: Install Terminus
   get_url:
-    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.7/terminus.phar"
+    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.8/terminus.phar"
     dest: "/usr/local/bin/terminus"
     owner: "apache"
     group: "apache"
