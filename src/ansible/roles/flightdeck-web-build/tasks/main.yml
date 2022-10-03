@@ -13,49 +13,48 @@
     - "zlib"
     - "apache2"
     - "apache2-proxy"
-    - "php8-apache2"
-    - "php8"
+    - "php81-apache2"
+    - "php81"
     - "git"
     - "patch"
     - "curl"
-    - "php8-bcmath"
-    - "php8-ctype"
-    - "php8-curl"
-    - "php8-dom"
-    - "php8-fileinfo"
-    - "php8-gd"
-    - "php8-iconv"
-    - "php8-intl"
-    - "php8-json"
-    - "php8-ldap"
-    - "php8-mbstring"
-    - "php8-pecl-mcrypt"
-    - "php8-pecl-memcached"
-    - "php8-mysqli"
-    - "php8-mysqlnd"
-    - "php8-opcache"
-    - "php8-openssl"
-    - "php8-pecl-apcu"
-    - "php8-phar"
-    - "php8-sqlite3"
-    - "php8-odbc"
-    - "php8-pdo_odbc"
-    - "php8-pdo"
-    - "php8-pdo_mysql"
-    - "php8-pdo_sqlite"
-    - "php8-phar"
-    - "php8-soap"
-    - "php8-session"
-    - "php8-simplexml"
-    - "php8-sodium"
-    - "php8-tokenizer"
-    - "php8-xdebug"
-    - "php8-exif"
-    - "php8-xml"
-    - "php8-xmlreader"
-    - "php8-xmlwriter"
-    - "php8-zip"
-    - "php8-zlib"
+    - "php81-bcmath"
+    - "php81-ctype"
+    - "php81-curl"
+    - "php81-dom"
+    - "php81-fileinfo"
+    - "php81-gd"
+    - "php81-iconv"
+    - "php81-intl"
+    - "php81-json"
+    - "php81-ldap"
+    - "php81-mbstring"
+    - "php81-pecl-memcached"
+    - "php81-mysqli"
+    - "php81-mysqlnd"
+    - "php81-opcache"
+    - "php81-openssl"
+    - "php81-pecl-apcu"
+    - "php81-phar"
+    - "php81-sqlite3"
+    - "php81-odbc"
+    - "php81-pdo_odbc"
+    - "php81-pdo"
+    - "php81-pdo_mysql"
+    - "php81-pdo_sqlite"
+    - "php81-phar"
+    - "php81-soap"
+    - "php81-session"
+    - "php81-simplexml"
+    - "php81-sodium"
+    - "php81-tokenizer"
+    - "php81-xdebug"
+    - "php81-exif"
+    - "php81-xml"
+    - "php81-xmlreader"
+    - "php81-xmlwriter"
+    - "php81-zip"
+    - "php81-zlib"
     - "py3-passlib"
     - "py3-mysqlclient"
     - "py3-jmespath"
@@ -73,11 +72,16 @@
     - clear caches
 - name: Add global php symlink
   file:
-    src: "/usr/bin/php8"
+    src: "/usr/bin/php81"
     dest: "/usr/local/bin/php"
     state: link
     force: yes
     follow: no
+- name: Force Composer to be ran with PHP 8.1
+  lineinfile:
+    path: "/usr/bin/composer"
+    regexp: '^/usr/bin/php8'
+    line: '/usr/bin/php81 /usr/bin/composer.phar $@'
 - name: Ensure key directories are owned by apache
   file:
     path: "{{ item }}"
@@ -90,7 +94,9 @@
     - "/etc/apache2"
     - "/etc/ssl/apache2"
     - "/etc/apache2/sites.d"
-    - "/etc/php8"
+    - "/etc/php81"
+    - "/etc/drush"
+    - "/etc/wpcli"
     - "/run/apache2"
     - "/var/log/apache2"
     - "/var/www"
@@ -128,18 +134,22 @@
     group: "apache"
     mode: "u=rwx,g=rwx,o=r"
   loop:
-    - "/etc/drush10"
+    - "/etc/drush"
     - "/etc/wpcli"
     - "/var/www/.composer/vendor/bin"
-- name: Install Drush 10.x
-  shell: >
-    composer require drush/drush:{{ flightdeck_drush_version | default('^10.6.2') }} &&
-    /etc/drush10/vendor/bin/drush core:init -y
-  args:
-    chdir: "/etc/drush10"
   become: yes
   become_user: "apache"
   become_method: "su"
+  register: command_output
+- debug:
+    var: command_output.stdout_lines
+- name: Install Drush Launcher
+  get_url:
+    url: "https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar"
+    dest: "/etc/drush/drush"
+    owner: "apache"
+    group: "apache"
+    mode: "u=rx,g=rx,o=rx"
 - name: Install Wordpress CLI
   get_url:
     url: "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
@@ -155,10 +165,8 @@
     force: yes
     follow: no
   loop:
-    - src: "/etc/drush10/vendor/bin/drush"
-      dest: "/usr/local/bin/drush10"
-    - src:  "/etc/drush10/vendor/bin/drush"
-      dest: "/var/www/.composer/vendor/bin/drush"
+    - src: "/etc/drush/drush"
+      dest: "/usr/local/bin/drush"
     - src: "/etc/wpcli/wp"
       dest: "/usr/local/bin/wp"
 - name: Set node global packages to install as user-local
@@ -175,7 +183,7 @@
   become_method: "su"
 - name: Install Terminus
   get_url:
-    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.7/terminus.phar"
+    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.8/terminus.phar"
     dest: "/usr/local/bin/terminus"
     owner: "apache"
     group: "apache"

@@ -30,15 +30,15 @@
     mode: "u=rw,g=r,o="
   loop:
     - src: "templates/php.ini"
-      dest: "/etc/php8/php.ini"
+      dest: "/etc/php81/php.ini"
     - src: "templates/00_opcache.ini"
-      dest: "/etc/php8/conf.d/00_opcache.ini"
+      dest: "/etc/php81/conf.d/00_opcache.ini"
     - src: "templates/apcu.ini"
-      dest: "/etc/php8/conf.d/apcu.ini"
+      dest: "/etc/php81/conf.d/apcu.ini"
 - name: Configure xdebug
   template:
     src: "templates/50_xdebug.ini"
-    dest: "/etc/php8/conf.d/50_xdebug.ini"
+    dest: "/etc/php81/conf.d/50_xdebug.ini"
     owner: "apache"
     group: "apache"
     mode: "u=rw,g=r,o="
