@@ -183,11 +183,35 @@
   become_method: "su"
 - name: Install Terminus
   get_url:
-    url: "https://github.com/pantheon-systems/terminus/releases/download/3.0.8/terminus.phar"
+    url: "https://github.com/pantheon-systems/terminus/releases/download/3.1.4/terminus.phar"
     dest: "/usr/local/bin/terminus"
     owner: "apache"
     group: "apache"
     mode: "u=rx,g=rx,o="
+- name: Create temp file for the Platform CLI installer
+  tempfile:
+    state: file
+    prefix: installer
+    suffix: .sh
+  register: _platform_tempfile
+- name: Download Platform CLI installer
+  get_url:
+    url: "https://raw.githubusercontent.com/platformsh/cli/main/installer.sh"
+    checksum: "sha512:c24aeed710834f74132dbb5e122bddac8f5a56c83ee8925063b1025f3d935501025547b7a118c3146a37f88cf7f1d4e3e273667000f67b471c7257e2d88cbbec"
+    dest: "{{ _platform_tempfile.path }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rx,g=rx,o="
+- name: Install the Platform CLI
+  shell: >
+    {{ _platform_tempfile.path }}
+- name: Configure ODBC
+  template:
+    src: "templates/odbcinst.ini"
+    dest: "/etc/odbcinst.ini"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
 - name: Configure ODBC
   template:
     src: "templates/odbcinst.ini"
