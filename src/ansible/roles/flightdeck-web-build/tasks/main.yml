@@ -198,6 +198,14 @@
 - name: Install the Platform CLI
   shell: >
     {{ _platform_tempfile.path }}
+- name: Install the Acquia CLI
+  get_url:
+    url: "https://github.com/acquia/cli/releases/download/2.9.3/acli.phar"
+    checksum: "sha512:c5c36877eb52c6ad8305f2aa397606c60f3533340f62d6d021797cde72c51fccfe494fa4ee4d0b19867be27cef17c02c909c1207c1a1965b8eabe378c137ec2e"
+    dest: "/usr/local/bin/acli"
+    owner: "apache"
+    group: "apache"
+    mode: "u=rx,g=rx,o="
 - name: Configure ODBC
   template:
     src: "templates/odbcinst.ini"
