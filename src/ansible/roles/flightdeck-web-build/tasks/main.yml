@@ -176,7 +176,8 @@
   become_method: "su"
 - name: Install Terminus
   get_url:
-    url: "https://github.com/pantheon-systems/terminus/releases/download/3.1.4/terminus.phar"
+    url: "https://github.com/pantheon-systems/terminus/releases/download/3.2.1/terminus.phar"
+    checksum: "sha512:63d2c0af2f450c85b9596163261e07edf9c94c62f368f3e443ff44e7839d483474729a96f349e5ac405148888a06c04e6f3327bbb55468a008dbcf0e38295293"
     dest: "/usr/local/bin/terminus"
     owner: "apache"
     group: "apache"
@@ -198,10 +199,12 @@
 - name: Install the Platform CLI
   shell: >
     {{ _platform_tempfile.path }}
+  environment:
+    VERSION: "4.6.1"
 - name: Install the Acquia CLI
   get_url:
-    url: "https://github.com/acquia/cli/releases/download/2.9.3/acli.phar"
-    checksum: "sha512:c5c36877eb52c6ad8305f2aa397606c60f3533340f62d6d021797cde72c51fccfe494fa4ee4d0b19867be27cef17c02c909c1207c1a1965b8eabe378c137ec2e"
+    url: "https://github.com/acquia/cli/releases/download/2.11.1/acli.phar"
+    checksum: "sha512:5c3fcd6f3553a719f99d05d8499d39bf7a5f3ab07a6bdd207ef282a8e838537597dd8e6f332a3e6df4725af3f3a168e376b54fec8fc5a6c49a2f32358f65943a"
     dest: "/usr/local/bin/acli"
     owner: "apache"
     group: "apache"
