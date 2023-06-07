@@ -1,5 +1,5 @@
-FROM alpine:3.15
-MAINTAINER tess@ten7.com
+FROM alpine:3.16
+# MAINTAINER tess@ten7.com
 
 # Update the package list and install Ansible.
 RUN apk -U upgrade &&\
