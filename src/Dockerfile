@@ -1,5 +1,5 @@
-FROM alpine:3.15
-MAINTAINER tess@ten7.com
+FROM alpine:3.16
+# MAINTAINER tess@ten7.com
 
 # Update the package list and install Ansible.
 RUN apk -U upgrade &&\
@@ -12,8 +12,8 @@ COPY ansible-hosts /etc/ansible/hosts
 COPY ansible.cfg /etc/ansible/ansible.cfg
 COPY ansible /ansible
 
-# Run the build.
-RUN ansible-galaxy install -fr /ansible/requirements.yml && \
+# Run the build. https://github.com/ansible/ansible/issues/78491
+RUN ansible-galaxy install -f -r /ansible/requirements.yml && \
     ansible-playbook -i /etc/ansible/hosts /ansible/build.yml
 
 # Allow Apache to allocate ports as non-root.
